@@ -1,0 +1,42 @@
+# ── Python / FastAPI ──────────────────────────────────────────────────────────
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+*.spec
+.env
+.env.*
+!.env.example
+
+# ── Next.js / Node ────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.turbo/
+frontend/.vercel/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# ── OS / Editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+*.log
+.cache/
+.parcel-cache/
+coverage/
+.nyc_output/

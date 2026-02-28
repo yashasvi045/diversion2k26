@@ -1,0 +1,69 @@
+/* globals.css — SiteScapr base styles */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ────────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Custom scrollbar ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #f8f8f8;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 99px;
+}
+
+/* ── Glassmorphism utility ──────────────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 229, 229, 0.8);
+}
+
+/* ── Score ring gradient (used in ScoreCard) ────────────────────────────────── */
+.score-ring {
+  background: conic-gradient(
+    #16a34a calc(var(--pct) * 1%),
+    #e5e5e5 0
+  );
+}
+
+/* ── Leaflet overrides ──────────────────────────────────────────────────────── */
+.leaflet-container {
+  font-family: "Poppins", sans-serif !important;
+  border-radius: 16px;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1) !important;
+  font-family: "Poppins", sans-serif !important;
+  border: 1px solid #e5e5e5 !important;
+}
+
+.leaflet-popup-tip-container {
+  display: none;
+}
