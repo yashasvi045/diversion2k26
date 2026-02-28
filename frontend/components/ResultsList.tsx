@@ -13,18 +13,19 @@
 "use client";
 
 import ScoreCard from "@/components/ScoreCard";
-import type { ScoredArea } from "@/app/page";
+import type { ScoredArea } from "@/lib/types";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
+// ── Props ─────────────────────────────────────────────────────
 
 interface ResultsListProps {
   results: ScoredArea[];
   onSelectArea: (area: ScoredArea) => void;
+  hasPaid: boolean;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function ResultsList({ results, onSelectArea }: ResultsListProps) {
+export default function ResultsList({ results, onSelectArea, hasPaid }: ResultsListProps) {
   if (results.length === 0) return null;
 
   const best = results[0];
@@ -76,10 +77,32 @@ export default function ResultsList({ results, onSelectArea }: ResultsListProps)
 
       {/* ── Score cards grid ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {results.map((area) => (
-          <ScoreCard key={area.name} area={area} onViewInsights={onSelectArea} />
+        {results.map((area, idx) => (
+          <ScoreCard
+            key={area.name}
+            area={area}
+            onViewInsights={onSelectArea}
+            hideDetails={!hasPaid}
+            locked={!hasPaid && idx >= 2}
+          />
         ))}
       </div>
+
+      {/* Free-tier upgrade nudge */}
+      {!hasPaid && (
+        <div className="mt-6 flex items-center justify-center gap-4 rounded-2xl border border-dashed border-green-200 bg-green-50 px-6 py-4">
+          <div className="flex-1 text-sm">
+            <span className="font-semibold text-gray-800">Seeing only 2 results?</span>
+            <span className="text-gray-500 ml-1">Upgrade to Pro to unlock all ranked areas, full metric breakdowns, and AI reasoning.</span>
+          </div>
+          <a
+            href="/pricing"
+            className="flex-shrink-0 text-xs font-bold bg-black text-white px-4 py-2.5 rounded-xl hover:bg-gray-800 transition-colors"
+          >
+            Upgrade →
+          </a>
+        </div>
+      )}
 
       {/* Methodology footnote */}
       <p className="mt-6 text-center text-xs text-gray-300">

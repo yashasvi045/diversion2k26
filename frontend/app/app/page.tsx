@@ -9,15 +9,18 @@
 
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import InputPanel from "@/components/InputPanel";
 import ResultsList from "@/components/ResultsList";
 import ExplanationDrawer from "@/components/ExplanationDrawer";
+import { useProStatus } from "@/lib/useProStatus";
+import type { ScoredArea, AnalyzeResponse } from "@/lib/types";
 
 // Dynamic import to prevent Leaflet SSR issues (Leaflet requires `window`)
 const MapView = dynamic(() => import("@/components/MapView"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[480px] rounded-2xl bg-green-50 border border-gray-200 flex items-center justify-center">
+    <div className="w-full flex-1 min-h-[480px] rounded-2xl bg-green-50 border border-gray-200 flex items-center justify-center">
       <span className="text-sm text-gray-400 font-medium animate-pulse">
         Loading map…
       </span>
@@ -25,44 +28,16 @@ const MapView = dynamic(() => import("@/components/MapView"), {
   ),
 });
 
-// ── Types ────────────────────────────────────────────────────────────────────
-
-export interface ScoredArea {
-  name: string;
-  latitude: number;
-  longitude: number;
-  score: number;
-  demand_score: number;           // 0-1
-  friction_score: number;         // 0-1
-  growth_score: number;           // 0-1
-  clustering_benefit_factor: number;
-  income_index: number;
-  foot_traffic_proxy: number;
-  population_density_index: number;
-  competition_index: number;
-  commercial_rent_index: number;
-  accessibility_penalty: number;
-  area_growth_trend: number;
-  vacancy_rate_improvement: number;
-  infrastructure_investment_index: number;
-  reasoning: string[];
-  rank: number;
-}
-
-export interface AnalyzeResponse {
-  results: ScoredArea[];
-  business_type: string;
-  total_areas_analyzed: number;
-}
-
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function AppPage() {
+  const { isSignedIn, hasPaid } = useProStatus();
   const [results, setResults] = useState<ScoredArea[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [businessType, setBusinessType] = useState<string>("");
   const [selectedArea, setSelectedArea] = useState<ScoredArea | null>(null);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   const handleAnalyze = useCallback(
     async (params: {
@@ -70,6 +45,11 @@ export default function AppPage() {
       target_demographic: string[];
       budget_range: number;
     }) => {
+      if (!isSignedIn) {
+        setShowSignInPrompt(true);
+        return;
+      }
+      setShowSignInPrompt(false);
       setIsLoading(true);
       setError(null);
       setResults([]);
@@ -103,7 +83,7 @@ export default function AppPage() {
         setIsLoading(false);
       }
     },
-    []
+    [isSignedIn]
   );
 
   return (
@@ -126,14 +106,31 @@ export default function AppPage() {
       <section
         id="app"
         className="max-w-screen-xl mx-auto px-6 py-8 scroll-mt-24"
-      >
+      >        {/* Sign-in prompt banner */}
+        {showSignInPrompt && (
+          <div className="mb-6 flex items-center gap-4 rounded-2xl border border-yellow-200 bg-yellow-50 px-5 py-4 animate-fade-in">
+            <svg className="w-5 h-5 text-yellow-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+            <p className="flex-1 text-sm text-yellow-800 font-medium">
+              Please sign in to run an analysis.
+            </p>
+            <Link
+              href="/sign-in?redirect_url=/app"
+              className="flex-shrink-0 text-xs font-bold bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors"
+            >
+              Sign In
+            </Link>
+          </div>
+        )}
+
         {/* Two-column grid: Input | Map */}
-        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 items-stretch">
           {/* Left — Input Panel */}
           <InputPanel onAnalyze={handleAnalyze} isLoading={isLoading} />
 
           {/* Right — Map */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 min-h-0">
             <MapView results={results} />
 
             {error && (
@@ -160,7 +157,7 @@ export default function AppPage() {
                 for {businessType}
               </span>
             </div>
-            <ResultsList results={results} onSelectArea={setSelectedArea} />
+            <ResultsList results={results} onSelectArea={setSelectedArea} hasPaid={hasPaid} />
           </>
         )}
 
@@ -191,7 +188,7 @@ export default function AppPage() {
       </section>
 
       {/* ── Explanation Drawer ───────────────────────────────────────────── */}
-      <ExplanationDrawer area={selectedArea} onClose={() => setSelectedArea(null)} />
+      <ExplanationDrawer area={selectedArea} onClose={() => setSelectedArea(null)} hasPaid={hasPaid} />
     </>
   );
 }

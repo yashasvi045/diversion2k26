@@ -6,8 +6,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 
 // ── Razorpay types ─────────────────────────────────────────────────────────
@@ -52,8 +54,8 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "₹999",
-    period: "per month",
+    price: "₹599",
+    period: "one-time",
     description: "Everything you need to make a confident site decision.",
     features: [
       "All ranked results (unlimited)",
@@ -63,7 +65,7 @@ const tiers = [
       "Save & compare locations",
       "Priority support",
     ],
-    cta: "Start Free Trial",
+    cta: "Get Pro",
     href: null,
     highlighted: true,
     plan: "pro",
@@ -88,25 +90,56 @@ const tiers = [
 ];
 
 export default function PricingPage() {
+  const { isSignedIn, user } = useUser();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [hasPaid, setHasPaid] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [paymentId, setPaymentId] = useState("");
+  const [error, setError] = useState<{ title: string; message: string } | null>(null);
+
+  // Load persisted payment status whenever the logged-in user changes
+  useEffect(() => {
+    if (user?.id) {
+      const stored = localStorage.getItem(`sitescapr_pro_paid_${user.id}`);
+      setHasPaid(stored === "true");
+    } else {
+      setHasPaid(false);
+    }
+  }, [user?.id]);
 
   async function handleProCheckout() {
+    if (!isSignedIn) {
+      router.push("/sign-in?redirect_url=/pricing");
+      return;
+    }
     setLoading(true);
     try {
       const loaded = await loadRazorpayScript();
       if (!loaded) {
-        alert("Failed to load Razorpay. Please check your connection.");
         setLoading(false);
+        setError({
+          title: "Payment Unavailable",
+          message: "We couldn’t load the payment service. Please check your internet connection and try again.",
+        });
         return;
       }
 
-      const res = await fetch(`${BACKEND}/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: "pro" }),
-      });
+      let res: Response;
+      try {
+        res = await fetch(`${BACKEND}/create-order`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: "pro" }),
+        });
+      } catch {
+        setLoading(false);
+        setError({
+          title: "Something went wrong",
+          message: "We’re having trouble processing your request right now. Please try again in a moment.",
+        });
+        return;
+      }
 
       if (!res.ok) throw new Error("Order creation failed");
       const order = await res.json();
@@ -116,7 +149,7 @@ export default function PricingPage() {
         amount: order.amount,
         currency: order.currency,
         name: "SiteScapr",
-        description: "Pro Plan — Monthly Subscription",
+        description: "Pro Plan — One-Time Payment",
         image: "/logo.png",
         order_id: order.order_id,
         handler: async function (response: {
@@ -136,10 +169,17 @@ export default function PricingPage() {
               }),
             });
             if (!verify.ok) throw new Error("Signature mismatch");
+            if (user?.id) {
+              localStorage.setItem(`sitescapr_pro_paid_${user.id}`, "true");
+            }
+            setHasPaid(true);
             setPaymentId(response.razorpay_payment_id);
-            setSuccess(true);
+            setShowSuccessModal(true);
           } catch {
-            alert("Payment could not be verified. Please contact support.");
+            setError({
+              title: "Payment Verification Failed",
+              message: "Your payment was received but we couldn’t verify it. Please contact support with your payment details.",
+            });
           }
         },
         prefill: {
@@ -158,7 +198,10 @@ export default function PricingPage() {
       rzp.open();
     } catch (err) {
       console.error(err);
-      alert("Something went wrong. Please try again.");
+      setError({
+        title: "Something went wrong",
+        message: "An unexpected error occurred. Please try again in a moment.",
+      });
     } finally {
       setLoading(false);
     }
@@ -166,8 +209,29 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-cream">
+      {/* ── Error Modal ────────────────────────────────────────────────────── */}
+      {error && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-sm w-full text-center flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+              <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-extrabold">{error.title}</h2>
+            <p className="text-gray-500 text-sm">{error.message}</p>
+            <button
+              onClick={() => setError(null)}
+              className="mt-2 w-full bg-black text-white font-semibold text-sm py-3 rounded-xl hover:bg-gray-800 transition-all"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Success Modal ──────────────────────────────────────────────────── */}
-      {success && (
+      {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
           <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-sm w-full text-center flex flex-col items-center gap-4">
             {/* Checkmark */}
@@ -184,7 +248,7 @@ export default function PricingPage() {
               Payment ID: {paymentId}
             </p>
             <button
-              onClick={() => { setSuccess(false); }}
+              onClick={() => router.push("/app")}
               className="mt-2 w-full bg-black text-white font-semibold text-sm py-3 rounded-xl hover:bg-gray-800 transition-all"
             >
               Continue to App →
@@ -285,23 +349,32 @@ export default function PricingPage() {
 
               {/* CTA */}
               {tier.plan === "pro" ? (
-                <button
-                  onClick={handleProCheckout}
-                  disabled={loading}
-                  className="mt-2 w-full text-center font-semibold text-sm py-3 rounded-xl transition-all bg-white text-black hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                      </svg>
-                      Processing…
-                    </>
-                  ) : (
-                    tier.cta
-                  )}
-                </button>
+                hasPaid ? (
+                  <div className="mt-2 w-full text-center font-semibold text-sm py-3 rounded-xl bg-green-500 text-white flex items-center justify-center gap-2 cursor-default">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    Pro Activated
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleProCheckout}
+                    disabled={loading}
+                    className="mt-2 w-full text-center font-semibold text-sm py-3 rounded-xl transition-all bg-white text-black hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                        </svg>
+                        Processing…
+                      </>
+                    ) : (
+                      tier.cta
+                    )}
+                  </button>
+                )
               ) : (
                 <Link
                   href={tier.href!}
@@ -320,7 +393,7 @@ export default function PricingPage() {
 
         {/* Fine print */}
         <p className="text-center text-xs text-gray-400 mt-10">
-          All prices in INR. Pro tier includes a 7-day free trial. Cancel anytime.
+          All prices in INR. Pro tier is a one-time payment — lifetime access, no recurring charges.
           Payments powered by Razorpay. Currently in test mode — no real charges.
         </p>
       </section>

@@ -87,7 +87,7 @@ class CreateOrderRequest(BaseModel):
 
 
 PLAN_AMOUNTS = {
-    "pro": 99900,  # ₹999 in paise
+    "pro": 59900,  # ₹599 in paise
 }
 
 

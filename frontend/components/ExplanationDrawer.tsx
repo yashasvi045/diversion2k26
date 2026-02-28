@@ -18,7 +18,7 @@
 "use client";
 
 import { useEffect } from "react";
-import type { ScoredArea } from "@/app/page";
+import type { ScoredArea } from "@/lib/types";
 
 // ── Score contribution display ────────────────────────────────────────────────
 
@@ -60,11 +60,12 @@ function ContributionRow({ label, rawValue, weight, positive }: ContributionRowP
 interface ExplanationDrawerProps {
   area: ScoredArea | null;
   onClose: () => void;
+  hasPaid: boolean;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function ExplanationDrawer({ area, onClose }: ExplanationDrawerProps) {
+export default function ExplanationDrawer({ area, onClose, hasPaid }: ExplanationDrawerProps) {
   const isOpen = area !== null;
 
   // Prevent body scroll when drawer is open
@@ -137,8 +138,37 @@ export default function ExplanationDrawer({ area, onClose }: ExplanationDrawerPr
 
             {/* ── Scrollable content ── */}
             <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-6">
-
-              {/* AI reasoning bullets */}
+              {!hasPaid ? (
+                /* Upgrade prompt for free tier */
+                <div className="flex flex-col items-center justify-center h-full gap-5 text-center py-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-lg text-black">Pro Feature</h3>
+                    <p className="text-sm text-gray-500 mt-2 leading-relaxed max-w-[220px] mx-auto">
+                      AI reasoning, full score breakdowns, and detailed metric analysis are available on the Pro plan.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2 w-full">
+                    <a
+                      href="/pricing"
+                      className="w-full bg-black text-white text-sm font-semibold py-3 rounded-xl hover:bg-gray-800 transition-colors text-center"
+                    >
+                      Upgrade to Pro — ₹599
+                    </a>
+                    <button
+                      onClick={onClose}
+                      className="w-full text-sm font-medium text-gray-500 py-2 rounded-xl hover:bg-gray-100 transition-colors"
+                    >
+                      Maybe later
+                    </button>
+                  </div>
+                </div>
+              ) : (
+              <>
               <div>
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
                   AI Analysis
@@ -234,6 +264,8 @@ export default function ExplanationDrawer({ area, onClose }: ExplanationDrawerPr
                   </div>
                 </div>
               </div>
+              </> /* end hasPaid */
+              )}
             </div>
 
             {/* ── Footer ── */}

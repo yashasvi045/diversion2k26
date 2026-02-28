@@ -23,7 +23,7 @@ import type L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { KOLKATA_AREAS } from "@/lib/kolkataMockData";
-import type { ScoredArea } from "@/app/page";
+import type { ScoredArea } from "@/lib/types";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -211,9 +211,9 @@ export default function MapView({ results }: MapViewProps) {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-card">
+    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-card flex flex-col flex-1 min-h-0 isolate">
       {/* Leaflet attaches to this div. Never recreated by React (no key change). */}
-      <div ref={containerRef} style={{ height: "480px", width: "100%" }} />
+      <div ref={containerRef} className="flex-1 min-h-0" style={{ width: "100%" }} />
 
       {/* Map legend */}
       <div className="px-4 py-3 bg-white border-t border-gray-100 flex items-center gap-6 text-xs text-gray-500">

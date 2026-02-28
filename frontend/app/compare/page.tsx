@@ -17,6 +17,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
+import { useProStatus } from "@/lib/useProStatus";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -219,6 +221,7 @@ function WeightInput({
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function ComparePage() {
+  const { isSignedIn, hasPaid } = useProStatus();
   const [locations, setLocations] = useState<LocationInput[]>([DEFAULT_LOCATION(1)]);
   const [topWeights, setTopWeights] = useState<TopLevelWeights>(DEFAULT_TOP);
   const [subWeights, setSubWeights] = useState<SubWeights>(DEFAULT_SUB);
@@ -258,6 +261,53 @@ export default function ComparePage() {
   const topSum = weightsSum(topWeights.demand, topWeights.friction, topWeights.growth);
   const demandSum = weightsSum(subWeights.demand_income, subWeights.demand_foot_traffic, subWeights.demand_population);
   const frictionSum = weightsSum(subWeights.friction_competition, subWeights.friction_rent, subWeights.friction_accessibility);
+
+  // ── Paywall ──────────────────────────────────────────────────
+  if (!isSignedIn || !hasPaid) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-6">
+        <div className="max-w-md w-full text-center flex flex-col items-center gap-6">
+          <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center">
+            <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight">Pro Feature</h1>
+            <p className="text-gray-500 mt-3 leading-relaxed">
+              The Compare tool lets you run side-by-side scoring for up to 5 custom locations with adjustable weights. Available on the Pro plan.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 w-full">
+            {!isSignedIn ? (
+              <Link
+                href="/sign-in?redirect_url=/compare"
+                className="w-full bg-black text-white font-semibold py-3 rounded-xl hover:bg-gray-800 transition-colors"
+              >
+                Sign In to Continue
+              </Link>
+            ) : (
+              <Link
+                href="/pricing"
+                className="w-full bg-black text-white font-semibold py-3 rounded-xl hover:bg-gray-800 transition-colors"
+              >
+                Upgrade to Pro — ₹599 one-time
+              </Link>
+            )}
+            <Link
+              href="/app"
+              className="w-full border border-gray-200 text-gray-600 font-medium py-3 rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              Back to Analysis
+            </Link>
+          </div>
+          <p className="text-xs text-gray-400">
+            One-time payment · Lifetime access · No recurring charges
+          </p>
+        </div>
+      </div>
+    );
+  }
   const growthSum = weightsSum(subWeights.growth_trend, subWeights.growth_vacancy, subWeights.growth_infra);
 
   const topInvalid = topSum !== 1.0;

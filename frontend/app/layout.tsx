@@ -14,9 +14,9 @@ import {
   SignUpButton,
   SignedIn,
   SignedOut,
-  UserButton,
 } from "@clerk/nextjs";
 import GitHubStarButton from "@/components/GitHubStarButton";
+import NavUserButton from "@/components/NavUserButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -114,7 +114,7 @@ export default function RootLayout({
                 >
                   Start Analysis
                 </Link>
-                <UserButton afterSignOutUrl="/" />
+                <NavUserButton />
               </SignedIn>
             </div>
           </nav>
