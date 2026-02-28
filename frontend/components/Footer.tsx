@@ -22,7 +22,7 @@ export default function Footer() {
             <span className="font-bold text-lg tracking-tight">SiteScapr</span>
           </div>
           <p className="text-sm text-gray-400 max-w-xs leading-relaxed">
-            AI-powered site intelligence for entrepreneurs making high-stakes location decisions. Currently in beta for Kolkata.
+            SaaS intelligence for entrepreneurs making high-stakes location decisions. Currently in beta for Kolkata.
           </p>
           <div className="mt-5 flex items-center gap-3">
             <span className="text-xs px-2.5 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 font-semibold">
