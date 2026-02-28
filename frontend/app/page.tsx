@@ -8,6 +8,7 @@
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import GlobeWrapper from "@/components/GlobeWrapper";
+import { auth } from "@clerk/nextjs/server";
 
 const steps = [
   {
@@ -42,7 +43,9 @@ const stats = [
   { value: "Free", label: "To get started" },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { userId } = await auth();
+  const ctaHref = userId ? "/app" : "/sign-up";
   return (
     <div className="bg-cream text-black">
       {/* HERO */}
@@ -64,18 +67,18 @@ export default function LandingPage() {
               scoring income, foot traffic, competition, and more.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link href="/app" className="bg-black text-white font-semibold px-7 py-3.5 rounded-2xl hover:bg-gray-800 transition-all shadow-md hover:shadow-lg text-sm tracking-wide">
+              <Link href={ctaHref} className="bg-black text-white font-semibold px-7 py-3.5 rounded-2xl hover:bg-gray-800 transition-all shadow-md hover:shadow-lg text-sm tracking-wide">
                 Start Free Analysis →
               </Link>
               <Link href="/pricing" className="border border-gray-200 text-black font-semibold px-7 py-3.5 rounded-2xl hover:bg-gray-50 transition-all text-sm tracking-wide">
                 View Pricing
               </Link>
             </div>
-            <p className="mt-5 text-xs text-gray-400 flex items-center gap-2">
+            <p className="mt-5 text-xs text-gray-400 font-bold flex items-center gap-2">
               <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              No sign-up required to run your first analysis
+              Sign up free and run your first analysis today
             </p>
             <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-gray-100">
               {stats.map((s) => (
@@ -157,7 +160,7 @@ export default function LandingPage() {
             Join entrepreneurs already using SiteScapr to de-risk their most important business decision.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Link href="/app" className="bg-white text-black font-semibold px-8 py-4 rounded-2xl hover:bg-gray-100 transition-all shadow-lg text-sm tracking-wide">
+            <Link href={ctaHref} className="bg-white text-black font-semibold px-8 py-4 rounded-2xl hover:bg-gray-100 transition-all shadow-lg text-sm tracking-wide">
               Start Free Analysis →
             </Link>
             <Link href="/pricing" className="border border-white/20 text-white font-semibold px-8 py-4 rounded-2xl hover:bg-white/10 transition-all text-sm tracking-wide">
