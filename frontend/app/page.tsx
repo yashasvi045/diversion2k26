@@ -60,7 +60,8 @@ export default function LandingPage() {
               Before<br />You Sign One<span className="text-green-600">.</span>
             </h1>
             <p className="mt-6 text-gray-500 text-lg leading-relaxed max-w-md">
-              Stop guessing. SiteScapr uses AI to rank Kolkata neighborhoods for your specific business — scoring income, foot traffic, competition, and more.
+              Stop guessing. SiteScapr uses a scoring engine to rank Kolkata neighborhoods for your specific business: 
+              scoring income, foot traffic, competition, and more.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <Link href="/app" className="bg-black text-white font-semibold px-7 py-3.5 rounded-2xl hover:bg-gray-800 transition-all shadow-md hover:shadow-lg text-sm tracking-wide">

@@ -8,6 +8,15 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+import GitHubStarButton from "@/components/GitHubStarButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,6 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    <ClerkProvider>
     <html lang="en">
       <head>
         {/* Preconnect for Google Fonts performance */}
@@ -83,17 +93,36 @@ export default function RootLayout({
             </div>
 
             {/* CTA */}
-            <Link
-              href="/app"
-              className="text-sm font-semibold bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors"
-            >
-              Start Analysis
-            </Link>
+            <div className="flex items-center gap-2">
+              <GitHubStarButton />
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="text-sm font-medium text-gray-600 hover:text-black px-3 py-2 rounded-xl transition-colors">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="text-sm font-semibold bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors">
+                    Get Started
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <Link
+                  href="/app"
+                  className="text-sm font-semibold bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors"
+                >
+                  Start Analysis
+                </Link>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+            </div>
           </nav>
         </header>
 
         <main className="pt-20">{children}</main>
       </body>
     </html>
+    </ClerkProvider>
   );
 }

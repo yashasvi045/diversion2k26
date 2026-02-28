@@ -130,7 +130,7 @@ export default function MethodologyPage() {
         </p>
         <div className="mt-4 flex items-center gap-3 flex-wrap">
           <span className="text-xs px-2.5 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 font-semibold">Formula v2.0</span>
-          <span className="text-xs px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-semibold">Kolkata Beta Dataset</span>
+          <span className="text-xs px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-semibold">Kolkata Alpha Dataset</span>
           <span className="text-xs text-gray-400">Last updated: Feb 2026</span>
         </div>
       </div>
