@@ -37,9 +37,11 @@ export default function Footer() {
           <p className="text-xs font-bold text-black uppercase tracking-wider mb-4">Product</p>
           <ul className="flex flex-col gap-3 text-sm text-gray-500">
             <li><Link href="/app" className="hover:text-black transition-colors">Analyze a Location</Link></li>
+            <li><Link href="/compare" className="hover:text-black transition-colors">Compare Locations</Link></li>
+            <li><Link href="/methodology" className="hover:text-black transition-colors">Methodology</Link></li>
+            <li><Link href="/status" className="hover:text-black transition-colors">System Status</Link></li>
             <li><Link href="/pricing" className="hover:text-black transition-colors">Pricing</Link></li>
             <li><span className="text-gray-300 cursor-not-allowed">Dashboard (soon)</span></li>
-            <li><span className="text-gray-300 cursor-not-allowed">API Access (soon)</span></li>
           </ul>
         </div>
 

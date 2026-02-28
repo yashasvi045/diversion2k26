@@ -65,8 +65,8 @@ interface ScoreCardProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function ScoreCard({ area, onViewInsights }: ScoreCardProps) {
-  // Map score (roughly 0–80 range) to a 0–100 ring percentage
-  const ringPct = Math.min(Math.round((area.score / 80) * 100), 100);
+  // Map score (0–65 range from new formula) to 0–100 ring percentage
+  const ringPct = Math.min(Math.round((area.score / 65) * 100), 100);
 
   const rankColors: Record<number, string> = {
     1: "bg-black text-white",
@@ -113,6 +113,22 @@ export default function ScoreCard({ area, onViewInsights }: ScoreCardProps) {
               </span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Component score badges */}
+      <div className="grid grid-cols-3 gap-1.5 text-center">
+        <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-1 py-1.5">
+          <p className="text-[10px] font-semibold text-emerald-600 leading-none">DEMAND</p>
+          <p className="text-sm font-extrabold text-emerald-700 mt-0.5">{Math.round(area.demand_score * 100)}</p>
+        </div>
+        <div className="rounded-lg bg-red-50 border border-red-200 px-1 py-1.5">
+          <p className="text-[10px] font-semibold text-red-500 leading-none">FRICTION</p>
+          <p className="text-sm font-extrabold text-red-600 mt-0.5">{Math.round(area.friction_score * 100)}</p>
+        </div>
+        <div className="rounded-lg bg-blue-50 border border-blue-200 px-1 py-1.5">
+          <p className="text-[10px] font-semibold text-blue-600 leading-none">GROWTH</p>
+          <p className="text-sm font-extrabold text-blue-700 mt-0.5">{Math.round(area.growth_score * 100)}</p>
         </div>
       </div>
 

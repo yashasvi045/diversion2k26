@@ -155,49 +155,65 @@ export default function ExplanationDrawer({ area, onClose }: ExplanationDrawerPr
                 </ul>
               </div>
 
-              {/* Score decomposition */}
+              {/* Score decomposition — 3-tier */}
               <div>
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
                   Score Breakdown
                 </h3>
                 <p className="text-xs text-gray-400 mb-3">
-                  How each factor contributes to the final score.
+                  LS = (Demand × 0.40) − (Friction × 0.35) + (Growth × 0.25)
                 </p>
-                <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 divide-y divide-gray-100">
-                  <ContributionRow
-                    label="Income Index"
-                    rawValue={area.income_index}
-                    weight={0.30}
-                    positive
-                  />
-                  <ContributionRow
-                    label="Foot Traffic"
-                    rawValue={area.foot_traffic_proxy}
-                    weight={0.25}
-                    positive
-                  />
-                  <ContributionRow
-                    label="Population Density"
-                    rawValue={area.population_density_index}
-                    weight={0.20}
-                    positive
-                  />
-                  <ContributionRow
-                    label="Competition"
-                    rawValue={area.competition_index}
-                    weight={0.15}
-                    positive={false}
-                  />
-                  <ContributionRow
-                    label="Commercial Rent"
-                    rawValue={area.commercial_rent_index}
-                    weight={0.10}
-                    positive={false}
-                  />
+
+                {/* Component scores */}
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  {[
+                    { label: "Demand", value: area.demand_score, color: "emerald", pct: area.demand_score },
+                    { label: "Friction", value: area.friction_score, color: "red", pct: area.friction_score },
+                    { label: "Growth", value: area.growth_score, color: "blue", pct: area.growth_score },
+                  ].map(({ label, value, color, pct }) => (
+                    <div key={label} className={`rounded-xl border px-3 py-2.5 text-center bg-${color}-50 border-${color}-200`}>
+                      <p className={`text-[10px] font-bold uppercase tracking-wide text-${color}-600`}>{label}</p>
+                      <p className={`text-xl font-extrabold text-${color}-700 mt-0.5`}>{Math.round(value * 100)}</p>
+                      <div className="mt-1.5 h-1 rounded-full bg-gray-200 overflow-hidden">
+                        <div className={`h-full rounded-full bg-${color}-500`} style={{ width: `${Math.round(pct * 100)}%` }} />
+                      </div>
+                    </div>
+                  ))}
                 </div>
+
+                {/* Sub-index breakdown per component */}
+                <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 divide-y divide-gray-100">
+                  {/* Demand sub-indices */}
+                  <div className="py-2">
+                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide mb-1.5">Demand inputs</p>
+                    <ContributionRow label="Income Index" rawValue={area.income_index} weight={0.30} positive />
+                    <ContributionRow label="Foot Traffic" rawValue={area.foot_traffic_proxy} weight={0.35} positive />
+                    <ContributionRow label="Population Density" rawValue={area.population_density_index} weight={0.35} positive />
+                  </div>
+                  {/* Friction sub-indices */}
+                  <div className="py-2">
+                    <p className="text-[10px] font-bold text-red-500 uppercase tracking-wide mb-1.5">Friction inputs</p>
+                    <ContributionRow label="Competition (adj.)" rawValue={Math.round(area.competition_index * (1 - area.clustering_benefit_factor))} weight={0.40} positive={false} />
+                    <ContributionRow label="Commercial Rent" rawValue={area.commercial_rent_index} weight={0.35} positive={false} />
+                    <ContributionRow label="Accessibility Penalty" rawValue={area.accessibility_penalty} weight={0.25} positive={false} />
+                  </div>
+                  {/* Growth sub-indices */}
+                  <div className="py-2">
+                    <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wide mb-1.5">Growth inputs</p>
+                    <ContributionRow label="Area Growth Trend" rawValue={area.area_growth_trend} weight={0.50} positive />
+                    <ContributionRow label="Vacancy Improvement" rawValue={area.vacancy_rate_improvement} weight={0.30} positive />
+                    <ContributionRow label="Infrastructure" rawValue={area.infrastructure_investment_index} weight={0.20} positive />
+                  </div>
+                </div>
+
+                {/* Clustering note */}
+                <p className="text-[10px] text-gray-400 mt-2 px-1">
+                  Clustering benefit factor applied: <span className="font-semibold text-gray-600">{area.clustering_benefit_factor.toFixed(2)}</span> (reduces effective competition)
+                </p>
+
                 {/* Total */}
                 <div className="mt-3 px-4 py-3 rounded-xl bg-green-50 border border-green-200 flex items-center justify-between">
-                  <span className="text-sm font-bold text-gray-700">Final Score</span>
+                  <span className="text-sm font-bold text-gray-700">Location Score</span>
                   <span className="text-lg font-extrabold text-green-700">{area.score}</span>
                 </div>
               </div>

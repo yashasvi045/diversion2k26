@@ -32,11 +32,19 @@ export interface ScoredArea {
   latitude: number;
   longitude: number;
   score: number;
+  demand_score: number;           // 0-1
+  friction_score: number;         // 0-1
+  growth_score: number;           // 0-1
+  clustering_benefit_factor: number;
   income_index: number;
   foot_traffic_proxy: number;
   population_density_index: number;
   competition_index: number;
   commercial_rent_index: number;
+  accessibility_penalty: number;
+  area_growth_trend: number;
+  vacancy_rate_improvement: number;
+  infrastructure_investment_index: number;
   reasoning: string[];
   rank: number;
 }

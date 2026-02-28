@@ -31,6 +31,8 @@ const BUSINESS_TYPES = [
   "Supermarket",
   "Educational Institute",
   "Medical Clinic",
+  "Hotel / Hospitality",
+  "Souvenir / Gift Shop",
 ];
 
 const DEMOGRAPHICS = [

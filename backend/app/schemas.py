@@ -17,15 +17,22 @@ class AnalyzeRequest(BaseModel):
 
 
 class AreaMetrics(BaseModel):
-    """Raw metrics for a single neighborhood area."""
+    """Raw metrics for a single neighborhood area (all indices 0–100)."""
     name: str
     latitude: float
     longitude: float
-    population_density_index: float  # 0–100
-    income_index: float              # 0–100
-    competition_index: float         # 0–100
-    foot_traffic_proxy: float        # 0–100
-    commercial_rent_index: float     # 0–100
+    # Demand inputs
+    income_index: float                      # 0–100
+    foot_traffic_proxy: float                # 0–100
+    population_density_index: float          # 0–100
+    # Friction inputs
+    competition_index: float                 # 0–100
+    commercial_rent_index: float             # 0–100
+    accessibility_penalty: float             # 0–100 (higher = harder to reach)
+    # Growth inputs
+    area_growth_trend: float                 # 0–100 (higher = faster development)
+    vacancy_rate_improvement: float          # 0–100 (higher = more vacancy improving)
+    infrastructure_investment_index: float   # 0–100
 
 
 class ScoredArea(BaseModel):
@@ -33,13 +40,23 @@ class ScoredArea(BaseModel):
     name: str
     latitude: float
     longitude: float
-    score: float                     # Final rounded score
+    # Final & component scores
+    score: float                             # Location Score × 100 (display scale)
+    demand_score: float                      # 0–1
+    friction_score: float                    # 0–1
+    growth_score: float                      # 0–1
+    clustering_benefit_factor: float         # 0–0.5 applied
+    # Raw indices (0–100, as stored in dataset)
     income_index: float
     foot_traffic_proxy: float
     population_density_index: float
     competition_index: float
     commercial_rent_index: float
-    reasoning: List[str]             # 3 generated explanation bullets
+    accessibility_penalty: float
+    area_growth_trend: float
+    vacancy_rate_improvement: float
+    infrastructure_investment_index: float
+    reasoning: List[str]                     # 3 generated explanation bullets
     rank: int
 
 
