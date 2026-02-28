@@ -7,6 +7,7 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,12 +28,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className="bg-white text-black antialiased">
+      <body className="bg-cream text-black antialiased">
         {/* ── Glassmorphism Navbar ── */}
         <header className="fixed top-0 left-0 right-0 z-50">
           <nav className="glass mx-auto max-w-screen-xl px-8 py-3 flex items-center justify-between mt-3 rounded-2xl shadow-glass">
             {/* Brand mark */}
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <span className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
                 <svg
                   className="w-4 h-4 text-white"
@@ -54,28 +55,31 @@ export default function RootLayout({
                 </svg>
               </span>
               <span className="font-bold text-lg tracking-tight">SiteScapr</span>
-            </div>
+            </Link>
 
             {/* Nav links */}
             <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-500">
-              <a href="#app" className="hover:text-black transition-colors">
+              <Link href="/" className="hover:text-black transition-colors">
+                Home
+              </Link>
+              <Link href="/app" className="hover:text-black transition-colors">
                 Analyze
-              </a>
-              <a href="#results" className="hover:text-black transition-colors">
-                Results
-              </a>
+              </Link>
+              <Link href="/pricing" className="hover:text-black transition-colors">
+                Pricing
+              </Link>
               <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold">
                 Kolkata Beta
               </span>
             </div>
 
             {/* CTA */}
-            <a
-              href="#app"
+            <Link
+              href="/app"
               className="text-sm font-semibold bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors"
             >
               Start Analysis
-            </a>
+            </Link>
           </nav>
         </header>
 

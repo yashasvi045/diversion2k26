@@ -14,9 +14,10 @@ const config: Config = {
         mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
+        cream: "#f4f3ee",
         brand: {
           black: "#000000",
-          white: "#ffffff",
+          white: "#f4f3ee",
           green: {
             50: "#f0fdf4",
             100: "#dcfce7",

@@ -16,7 +16,7 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: #ffffff;
+  background-color: #f4f3ee;
   font-family: "Poppins", sans-serif;
   color: #000000;
   -webkit-font-smoothing: antialiased;
@@ -37,10 +37,10 @@ body {
 
 /* ── Glassmorphism utility ──────────────────────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(244, 243, 238, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(229, 229, 229, 0.8);
+  border: 1px solid rgba(229, 229, 229, 0.9);
 }
 
 /* ── Score ring gradient (used in ScoreCard) ────────────────────────────────── */
