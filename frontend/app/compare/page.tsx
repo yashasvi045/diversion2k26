@@ -2,7 +2,7 @@
  * app/compare/page.tsx
  * --------------------
  * Multi-location comparison calculator.
- * Fully client-side — no backend call needed.
+ * Fully client-side - no backend call needed.
  *
  * Formula (v2):
  *   LS = (Demand × w_d) − (Friction × w_f) + (Growth × w_g)
@@ -99,9 +99,9 @@ const DEFAULT_SUB: SubWeights = {
 };
 
 const CLUSTERING_PRESETS = [
-  { label: "Low — Professional Services (0.0)", value: 0.0 },
-  { label: "Medium — Retail (0.3)", value: 0.3 },
-  { label: "High — Food & Beverage (0.5)", value: 0.5 },
+  { label: "Low - Professional Services (0.0)", value: 0.0 },
+  { label: "Medium - Retail (0.3)", value: 0.3 },
+  { label: "High - Food & Beverage (0.5)", value: 0.5 },
 ];
 
 // ── Formula ───────────────────────────────────────────────────────────────────
@@ -291,7 +291,7 @@ export default function ComparePage() {
                 href="/pricing"
                 className="w-full bg-black text-white font-semibold py-3 rounded-xl hover:bg-gray-800 transition-colors"
               >
-                Upgrade to Pro — ₹599 one-time
+                Upgrade to Pro - ₹599 one-time
               </Link>
             )}
             <Link
@@ -361,7 +361,7 @@ export default function ComparePage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-8 items-start">
-        {/* Left — location inputs */}
+        {/* Left - location inputs */}
         <div className="flex flex-col gap-4">
 
           {/* Location cards */}
@@ -567,7 +567,7 @@ export default function ComparePage() {
             {showAdvanced && (
               <div className="px-5 pb-5 border-t border-gray-100">
                 <p className="text-xs text-gray-400 mt-4 mb-4">
-                  Edit formula weights below. Each group must sum to exactly 1.00 — a warning will appear if they don&apos;t.
+                  Edit formula weights below. Each group must sum to exactly 1.00 - a warning will appear if they don&apos;t.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -648,7 +648,7 @@ export default function ComparePage() {
           </div>
         </div>
 
-        {/* Right — results table */}
+        {/* Right - results table */}
         <div className="sticky top-24">
           <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -715,7 +715,7 @@ export default function ComparePage() {
               LS = ({topWeights.demand} × D) − ({topWeights.friction} × F) + ({topWeights.growth} × G)
             </p>
             {anyInvalid && (
-              <p className="text-xs text-red-500 mt-2 font-semibold">⚠ Scores may be inaccurate — fix weight errors above.</p>
+              <p className="text-xs text-red-500 mt-2 font-semibold">⚠ Scores may be inaccurate - fix weight errors above.</p>
             )}
           </div>
         </div>

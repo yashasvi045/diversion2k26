@@ -21,7 +21,7 @@ import NavLinks from "@/components/NavLinks";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SiteScapr — AI Business Location Intelligence",
+  title: "SiteScapr - AI Business Location Intelligence",
   description:
     "Discover the best neighborhoods to open your business in Kolkata. Powered by AI-driven scoring of income, foot traffic, competition, and rent data.",
 };
@@ -44,27 +44,7 @@ export default function RootLayout({
         <header className="fixed top-0 left-0 right-0 z-50">
           <nav className="glass mx-auto max-w-screen-xl px-8 py-3 flex items-center justify-between mt-3 rounded-2xl shadow-glass">
             {/* Brand mark */}
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <span className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-                  />
-                </svg>
-              </span>
+            <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
               <span className="font-bold text-lg tracking-tight">SiteScapr</span>
             </Link>
 

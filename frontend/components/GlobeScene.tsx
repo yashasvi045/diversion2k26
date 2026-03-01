@@ -23,7 +23,7 @@ function GlobeGrid({ radius = 1.002, segments = 64, color = "#16a34a", opacity =
   const lines = useMemo(() => {
     const geo: THREE.BufferGeometry[] = [];
 
-    // Latitude circles (parallels) — evenly spaced, drawn as closed rings
+    // Latitude circles (parallels) - evenly spaced, drawn as closed rings
     const latSteps = 24; // number of parallels (excluding poles)
     for (let i = 1; i < latSteps; i++) {
       const lat = -90 + (180 / latSteps) * i;
@@ -38,7 +38,7 @@ function GlobeGrid({ radius = 1.002, segments = 64, color = "#16a34a", opacity =
       geo.push(new THREE.BufferGeometry().setFromPoints(pts));
     }
 
-    // Longitude lines (meridians) — evenly spaced vertical great circles
+    // Longitude lines (meridians) - evenly spaced vertical great circles
     const lonSteps = 36; // number of meridians
     for (let i = 0; i < lonSteps; i++) {
       const lon = (i / lonSteps) * Math.PI * 2;
@@ -199,7 +199,7 @@ export default function GlobeScene() {
 
         <Globe />
 
-        {/* Subtle manual orbit — no zoom, limited pan */}
+        {/* Subtle manual orbit - no zoom, limited pan */}
         <OrbitControls
           enableZoom={false}
           enablePan={false}

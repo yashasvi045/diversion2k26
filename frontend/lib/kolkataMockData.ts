@@ -8,11 +8,11 @@
  * authoritative copy used for computation.
  *
  * Index scale: 0–100. Higher = more of that attribute.
- *   income_index            — average consumer purchasing power
- *   foot_traffic_proxy      — pedestrian & commuter volume estimate
- *   population_density_index — resident density per sq km
- *   competition_index       — density of similar businesses
- *   commercial_rent_index   — relative monthly rent cost
+ *   income_index            - average consumer purchasing power
+ *   foot_traffic_proxy      - pedestrian & commuter volume estimate
+ *   population_density_index - resident density per sq km
+ *   competition_index       - density of similar businesses
+ *   commercial_rent_index   - relative monthly rent cost
  */
 
 export interface AreaData {

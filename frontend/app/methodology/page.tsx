@@ -10,30 +10,35 @@ import Link from "next/link";
 const formulaSteps = [
   {
     label: "Location Score",
+    plain: "Your final grade. The more opportunity a neighbourhood offers, the higher it scores - and the harder it is to operate there, the more it loses.",
     formula: "LS = (Demand × 0.40) − (Friction × 0.35) + (Growth × 0.25)",
     description:
       "The top-level composite score. Demand and Growth are positive contributors; Friction is a penalty. The weights reflect the relative importance of market opportunity vs. operating headwinds vs. future trajectory.",
   },
   {
     label: "Demand Score",
+    plain: "How many people want what you're selling, and can they afford it? This measures the sheer volume and spending power of people in the area.",
     formula: "DS = (0.30 × income_index) + (0.35 × foot_traffic_index) + (0.35 × population_density_index)",
     description:
       "Measures the revenue potential of the location. Foot traffic and population density are weighted equally and slightly higher than income, because volume-driven businesses depend more on throughput than on per-customer value.",
   },
   {
     label: "Friction Score",
+    plain: "How much will this location cost you - in rent, rivals, and hassle? A high friction score is a red flag. It gets subtracted from your final score.",
     formula: "FS = (0.40 × adj_competition) + (0.35 × commercial_rent) + (0.25 × accessibility_penalty)",
     description:
       "Measures the operating resistance of the location. Adjusted competition is the dominant friction factor. Rent follows, and accessibility is the smallest but still material component.",
   },
   {
     label: "Adjusted Competition Index",
+    plain: "Being surrounded by similar businesses isn't always bad. A café next to other cafés benefits from the crowd they all attract together - so the competition penalty is softened.",
     formula: "adj_competition = competition_index × (1 − clustering_benefit_factor)",
     description:
       "Reduces the raw competition penalty when the business type benefits from co-location with similar businesses (e.g., food courts, retail clusters). The CBF is set per business type and ranges from 0.0 (professional services) to 0.5 (food & beverage).",
   },
   {
     label: "Growth Score",
+    plain: "Is this neighbourhood on its way up? This rewards areas showing signs of development, fresh investment, and fewer empty shops - a bet on the future.",
     formula: "GS = (0.50 × area_growth_trend) + (0.30 × vacancy_rate_improvement) + (0.20 × infrastructure_investment_index)",
     description:
       "Forward-looking component capturing the medium-term trajectory of the area. Growth trend dominates; vacancy improvement signals market confidence; infrastructure investment is a leading indicator of long-term desirability.",
@@ -79,28 +84,28 @@ const variables = [
   {
     name: "accessibility_penalty",
     range: "0–1",
-    source: "Estimated — road width, metro proximity, parking availability",
+    source: "Estimated - road width, metro proximity, parking availability",
     notes: "Proxied from road grade and transit coverage. Higher = harder to access. Not from a primary data source.",
     proxy: true,
   },
   {
     name: "area_growth_trend",
     range: "0–1",
-    source: "Estimated — KMDA development plans, satellite change detection",
+    source: "Estimated - KMDA development plans, satellite change detection",
     notes: "Proxied from published development zone classifications and new commercial registration density. Updated annually.",
     proxy: true,
   },
   {
     name: "vacancy_rate_improvement",
     range: "0–1",
-    source: "Estimated — commercial occupancy surveys",
+    source: "Estimated - commercial occupancy surveys",
     notes: "Proxy for declining vacancy. Derived from listing age on property portals vs. prior year.",
     proxy: true,
   },
   {
     name: "infrastructure_investment_index",
     range: "0–1",
-    source: "Estimated — state budget allocations, KMDA reports",
+    source: "Estimated - state budget allocations, KMDA reports",
     notes: "Captures planned and recent capital investment in roads, metro, utilities. Reviewed semi-annually.",
     proxy: true,
   },
@@ -110,7 +115,7 @@ const cbfTable = [
   { type: "Tech Office, Medical Clinic, Educational Institute", cbf: "0.00", rationale: "Professional services compete on differentiation; co-location provides no benefit." },
   { type: "Pharmacy, Gym / Fitness Centre", cbf: "0.15", rationale: "Mild clustering benefit from shared foot traffic corridors." },
   { type: "Retail Store, Supermarket, Salon & Beauty", cbf: "0.30", rationale: "Retail clusters attract comparison shoppers, reducing effective competition." },
-  { type: "Restaurant, Cafe", cbf: "0.50", rationale: "Food & beverage hubs create destination effects — competition is strongly mitigated by cluster draw." },
+  { type: "Restaurant, Cafe", cbf: "0.50", rationale: "Food & beverage hubs create destination effects - competition is strongly mitigated by cluster draw." },
 ];
 
 export default function MethodologyPage() {
@@ -125,7 +130,7 @@ export default function MethodologyPage() {
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight">Scoring Methodology</h1>
         <p className="mt-2 text-gray-500 max-w-2xl text-sm leading-relaxed">
-          A complete description of the SiteScapr v2 formula — how scores are computed, what data powers each variable,
+          A complete description of the SiteScapr v2 formula - how scores are computed, what data powers each variable,
           and where proxied estimates are used. Transparency is a design principle here, not an afterthought.
         </p>
         <div className="mt-4 flex items-center gap-3 flex-wrap">
@@ -152,6 +157,7 @@ export default function MethodologyPage() {
                     {step.formula}
                   </code>
                   <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
+                  <p className="text-sm font-bold text-gray-800 mt-3 leading-snug"><span className="text-gray-500 font-semibold">Explanation: </span>{step.plain}</p>
                 </div>
               </div>
             </div>
@@ -162,6 +168,7 @@ export default function MethodologyPage() {
       {/* Clustering benefit factor */}
       <section className="mb-12">
         <h2 className="text-xl font-bold tracking-tight mb-1">Clustering Benefit Factor</h2>
+        <p className="text-sm font-bold text-gray-800 mb-2">Some businesses actually do better when their rivals are nearby - because together they become a destination. This factor adjusts the competition penalty to give those businesses a fair deal.</p>
         <p className="text-sm text-gray-500 mb-4">
           The CBF reduces the raw competition penalty by the proportion that &quot;cluster draw&quot; offsets head-to-head competition.
           A restaurant in a food court competes less negatively with nearby restaurants than, say, two law firms on the same street.
@@ -191,6 +198,7 @@ export default function MethodologyPage() {
       {/* Variables & data sources */}
       <section className="mb-12">
         <h2 className="text-xl font-bold tracking-tight mb-1">Variables & Data Sources</h2>
+        <p className="text-sm font-bold text-gray-800 mb-2">These are the ingredients that go into every score. Each one is a real-world measurement - like how busy a street is, or what rent costs - converted into a number between 0 and 1.</p>
         <p className="text-sm text-gray-500 mb-4">
           Variables marked <span className="font-semibold text-orange-600">proxy</span> are estimated from secondary sources and should be treated as indicative.
           Primary-sourced variables are updated at least annually.
@@ -229,6 +237,7 @@ export default function MethodologyPage() {
       {/* Normalisation */}
       <section className="mb-12">
         <h2 className="text-xl font-bold tracking-tight mb-1">Normalisation</h2>
+        <p className="text-sm font-bold text-gray-800 mb-3">Every neighbourhood is rated on the same 0-to-100 scale so they can be compared fairly - like grading all students out of 100 regardless of how hard each test was. The final score you see is that same idea applied to location quality.</p>
         <div className="rounded-2xl border border-gray-200 bg-white p-5 text-sm text-gray-600 leading-relaxed">
           <p className="mb-3">
             The Kolkata dataset stores all values on a <strong>0–100 integer scale</strong> for readability.
@@ -249,13 +258,14 @@ export default function MethodologyPage() {
       {/* Limitations */}
       <section className="mb-12">
         <h2 className="text-xl font-bold tracking-tight mb-1">Limitations & Assumptions</h2>
+        <p className="text-sm font-bold text-gray-800 mb-1">No model is perfect. Think of SiteScapr as a very well-informed starting point - not the final word. Here is what it cannot see:</p>
         <ul className="flex flex-col gap-3 mt-4">
           {[
             "All Kolkata neighborhood data is point-in-time (Feb 2026). Rapidly changing areas (New Town, Rajarhat) may deviate from actuals within 6–12 months.",
             "The formula is a deterministic weighted model, not a machine learning prediction. It cannot account for hyper-local factors (e.g., a specific corner vs. mid-block on the same street).",
             "Proxy variables (marked above) introduce estimation error. Treat scores as relative rankings within the dataset, not absolute predictions of revenue.",
             "Budget filtering uses a linear rent approximation. In reality, commercial landlords negotiate non-linearly and lease terms vary significantly.",
-            "The formula does not currently account for seasonality, zoning regulations, or lease availability — all of which materially affect real-world location decisions.",
+            "The formula does not currently account for seasonality, zoning regulations, or lease availability - all of which materially affect real-world location decisions.",
           ].map((item, i) => (
             <li key={i} className="flex gap-3 text-sm text-gray-600">
               <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-xs font-bold mt-0.5">{i + 1}</span>

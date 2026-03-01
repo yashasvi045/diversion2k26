@@ -53,7 +53,7 @@ export default function MapView({ results }: MapViewProps) {
   // Ref to the <div> Leaflet will attach to
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Ref to the live L.Map instance — survives re-renders without triggering them
+  // Ref to the live L.Map instance - survives re-renders without triggering them
   const mapRef = useRef<L.Map | null>(null);
 
   // Refs to current circle markers so we can redraw on results change
@@ -63,7 +63,7 @@ export default function MapView({ results }: MapViewProps) {
   // KEY FIX: map.remove() in the cleanup calls Leaflet's internal teardown,
   // which deletes _leaflet_id from the container DOM element. This means
   // React 18 Strict Mode's remount always gets a pristine element to work
-  // with — no "Map container already initialized" crash.
+  // with - no "Map container already initialized" crash.
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -115,7 +115,7 @@ export default function MapView({ results }: MapViewProps) {
     });
 
     return () => {
-      // map.remove() is the critical call — it wipes _leaflet_id from the DOM
+      // map.remove() is the critical call - it wipes _leaflet_id from the DOM
       // element, allowing Strict Mode's remount to succeed cleanly.
       if (mapRef.current) {
         mapRef.current.remove();

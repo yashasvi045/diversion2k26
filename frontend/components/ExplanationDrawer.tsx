@@ -157,7 +157,7 @@ export default function ExplanationDrawer({ area, onClose, hasPaid }: Explanatio
                       href="/pricing"
                       className="w-full bg-black text-white text-sm font-semibold py-3 rounded-xl hover:bg-gray-800 transition-colors text-center"
                     >
-                      Upgrade to Pro — ₹599
+                      Upgrade to Pro - ₹599
                     </a>
                     <button
                       onClick={onClose}
@@ -185,7 +185,7 @@ export default function ExplanationDrawer({ area, onClose, hasPaid }: Explanatio
                 </ul>
               </div>
 
-              {/* Score decomposition — 3-tier */}
+              {/* Score decomposition - 3-tier */}
               <div>
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
                   Score Breakdown

@@ -1,7 +1,7 @@
 /**
  * app/app/page.tsx
  * ----------------
- * SiteScapr scoring tool — the core analysis experience.
+ * SiteScapr scoring tool - the core analysis experience.
  * Moved from root page to /app route as part of multi-page restructure.
  */
 
@@ -126,10 +126,10 @@ export default function AppPage() {
 
         {/* Two-column grid: Input | Map */}
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 items-stretch">
-          {/* Left — Input Panel */}
+          {/* Left - Input Panel */}
           <InputPanel onAnalyze={handleAnalyze} isLoading={isLoading} />
 
-          {/* Right — Map */}
+          {/* Right - Map */}
           <div className="flex flex-col gap-4 min-h-0">
             <MapView results={results} />
 

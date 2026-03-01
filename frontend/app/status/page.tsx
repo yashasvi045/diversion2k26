@@ -45,7 +45,7 @@ const STATUS_BADGE: Record<StatusLevel, string> = {
 const STATIC_COMPONENTS: ServiceStatus[] = [
   {
     name: "Scoring Engine",
-    description: "v2 formula — Demand / Friction / Growth",
+    description: "v2 formula - Demand / Friction / Growth",
     status: "operational",
     detail: "Formula v2.0 · 9 sub-indices · CBF applied per business type",
   },
@@ -97,11 +97,19 @@ export default function StatusPage() {
   const [apiLatency, setApiLatency] = useState<number | undefined>(undefined);
   const [checkedAt, setCheckedAt] = useState<string>("");
 
+  const [pipelineStatus, setPipelineStatus] = useState<StatusLevel>("checking");
+  const [pipelineDetail, setPipelineDetail] = useState("Fetching pipeline run info…");
+  const [pipelineLatency, setPipelineLatency] = useState<number | undefined>(undefined);
+
   const checkApi = async () => {
     setApiStatus("checking");
     setApiDetail("Pinging backend…");
     setApiLatency(undefined);
+    setPipelineStatus("checking");
+    setPipelineDetail("Fetching pipeline run info…");
+    setPipelineLatency(undefined);
 
+    // ── API health ──
     const start = performance.now();
     try {
       const res = await fetch("http://localhost:8000/", {
@@ -115,12 +123,46 @@ export default function StatusPage() {
         setApiLatency(latency);
       } else {
         setApiStatus("degraded");
-        setApiDetail(`HTTP ${res.status} — API responded with an error`);
+        setApiDetail(`HTTP ${res.status} - API responded with an error`);
         setApiLatency(latency);
       }
     } catch {
       setApiStatus("down");
-      setApiDetail("Cannot reach backend at localhost:8000 — is it running?");
+      setApiDetail("Cannot reach backend at localhost:8000 - is it running?");
+    }
+
+    // ── Pipeline health ──
+    const pStart = performance.now();
+    try {
+      const pRes = await fetch("http://localhost:8000/pipeline/last-run", {
+        signal: AbortSignal.timeout(5000),
+      });
+      const pLatency = Math.round(performance.now() - pStart);
+      if (pRes.ok) {
+        const pData = await pRes.json();
+        setPipelineLatency(pLatency);
+        if (!pData.last_updated) {
+          setPipelineStatus("degraded");
+          setPipelineDetail("No pipeline runs recorded yet · n8n workflow may not have executed");
+        } else {
+          // Check if last run was within 24h
+          const lastRun = new Date(pData.last_updated);
+          const hoursAgo = (Date.now() - lastRun.getTime()) / 1000 / 3600;
+          if (hoursAgo < 24) {
+            setPipelineStatus("operational");
+            setPipelineDetail(`Last run: ${lastRun.toLocaleString()}`);
+          } else {
+            setPipelineStatus("degraded");
+            setPipelineDetail(`Last run: ${lastRun.toLocaleString()}`);
+          }
+        }
+      } else {
+        setPipelineStatus("degraded");
+        setPipelineDetail(`HTTP ${pRes.status} - pipeline endpoint error`);
+      }
+    } catch {
+      setPipelineStatus("down");
+      setPipelineDetail("Cannot reach pipeline endpoint - backend may be down");
     }
 
     setCheckedAt(new Date().toLocaleTimeString());
@@ -138,6 +180,13 @@ export default function StatusPage() {
       status: apiStatus,
       detail: apiDetail,
       latencyMs: apiLatency,
+    },
+    {
+      name: "Data Enrichment Pipeline",
+      description: "n8n · AI index updates · runs every 12h",
+      status: pipelineStatus,
+      detail: pipelineDetail,
+      latencyMs: pipelineLatency,
     },
     ...STATIC_COMPONENTS,
   ];
@@ -176,8 +225,8 @@ export default function StatusPage() {
               {overallStatus === "operational"
                 ? "All systems operational"
                 : overallStatus === "degraded"
-                ? "Partial outage — some systems degraded"
-                : "Major outage — one or more systems down"}
+                ? "Partial outage - some systems degraded"
+                : "Major outage - one or more systems down"}
             </p>
             {checkedAt && (
               <p className="text-xs text-gray-400 mt-0.5">Last checked at {checkedAt}</p>
@@ -233,7 +282,7 @@ export default function StatusPage() {
             uvicorn app.main:app --reload --port 8000
           </code>
           <p className="text-[10px] text-orange-500 mt-2">
-            The Compare calculator works offline — only the main Analyse page requires the backend.
+            The Compare calculator works offline - only the main Analyse page requires the backend.
           </p>
         </div>
       )}

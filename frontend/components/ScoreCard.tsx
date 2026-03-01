@@ -82,7 +82,7 @@ export default function ScoreCard({ area, onViewInsights, hideDetails = false, l
 
   return (
     <article className="relative rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white shadow-card hover:shadow-glass transition-all duration-300 p-5 flex flex-col gap-4 animate-slide-up overflow-hidden">
-      {/* Locked overlay — cards #3-5 for free users */}
+      {/* Locked overlay - cards #3-5 for free users */}
       {locked && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/80 backdrop-blur-[3px] rounded-2xl gap-3 px-4 text-center">
           <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
@@ -154,7 +154,7 @@ export default function ScoreCard({ area, onViewInsights, hideDetails = false, l
         </div>
       </div>
 
-      {/* Metric bars — hidden for free tier ("basic" plan shows component scores only) */}
+      {/* Metric bars - hidden for free tier ("basic" plan shows component scores only) */}
       {!hideDetails && (
         <div className="flex flex-col gap-1.5">
           <MetricBar label="Income" value={area.income_index} positive />

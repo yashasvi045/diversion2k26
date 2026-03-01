@@ -1,7 +1,7 @@
 /**
  * app/page.tsx
  * ------------
- * SiteScapr landing page — root route (/).
+ * SiteScapr landing page - root route (/).
  * Sections: Hero (Three.js globe) → How it works → Features → Stats → CTA → Footer
  */
 
@@ -161,7 +161,7 @@ export default async function LandingPage() {
             <h2 className="mt-3 text-4xl font-extrabold tracking-tight">Scores that update themselves</h2>
             <p className="mt-3 text-gray-500 max-w-lg mx-auto text-base">
               Behind the scenes, an automated system keeps neighbourhood scores in sync with what&apos;s
-              actually happening on the ground — so you never have to worry about stale data.
+              actually happening on the ground - so you never have to worry about stale data.
             </p>
           </div>
 

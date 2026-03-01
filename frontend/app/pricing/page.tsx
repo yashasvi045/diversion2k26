@@ -1,7 +1,7 @@
 /**
  * app/pricing/page.tsx
  * --------------------
- * SiteScapr pricing page — tier overview and Razorpay checkout (test mode).
+ * SiteScapr pricing page - tier overview and Razorpay checkout (test mode).
  */
 
 "use client";
@@ -149,7 +149,7 @@ export default function PricingPage() {
         amount: order.amount,
         currency: order.currency,
         name: "SiteScapr",
-        description: "Pro Plan — One-Time Payment",
+        description: "Pro Plan - One-Time Payment",
         image: "/logo.png",
         order_id: order.order_id,
         handler: async function (response: {
@@ -393,8 +393,8 @@ export default function PricingPage() {
 
         {/* Fine print */}
         <p className="text-center text-xs text-gray-400 mt-10">
-          All prices in INR. Pro tier is a one-time payment — lifetime access, no recurring charges.
-          Payments powered by Razorpay. Currently in test mode — no real charges.
+          All prices in INR. Pro tier is a one-time payment - lifetime access, no recurring charges.
+          Payments powered by Razorpay. Currently in test mode - no real charges.
         </p>
       </section>
       <Footer />
