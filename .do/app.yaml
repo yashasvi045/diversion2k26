@@ -1,0 +1,49 @@
+name: sitescapr
+region: blr
+
+services:
+  # ── Backend (FastAPI) ──────────────────────────────────────────
+  - name: backend
+    source_dir: backend
+    github:
+      branch: main
+      deploy_on_push: true
+    build_command: pip install -r requirements.txt
+    run_command: uvicorn app.main:app --host 0.0.0.0 --port 8080
+    environment_slug: python
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    http_port: 8080
+    envs:
+      - key: RAZORPAY_KEY_ID
+        scope: RUN_TIME
+        type: SECRET
+      - key: RAZORPAY_KEY_SECRET
+        scope: RUN_TIME
+        type: SECRET
+
+  # ── Frontend (Next.js) ─────────────────────────────────────────
+  - name: frontend
+    source_dir: frontend
+    github:
+      branch: main
+      deploy_on_push: true
+    build_command: npm install && npm run build
+    run_command: npm run start
+    environment_slug: node-js
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    http_port: 3000
+    envs:
+      - key: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+        scope: BUILD_TIME
+        type: SECRET
+      - key: CLERK_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: NEXT_PUBLIC_RAZORPAY_KEY_ID
+        scope: BUILD_TIME
+        type: SECRET
+      - key: NEXT_PUBLIC_BACKEND_URL
+        scope: BUILD_TIME
+        value: ${backend.PUBLIC_URL}
