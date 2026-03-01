@@ -44,10 +44,10 @@ const stats = [
 ];
 
 const pipelineSteps = [
-  { icon: "🗞️", label: "NewsAPI", description: "Fetches the latest headlines for each neighbourhood every 12 hours" },
-  { icon: "🤖", label: "Groq LLaMA 3.1", description: "AI reads headlines and outputs scoring deltas in structured JSON" },
-  { icon: "⚙️", label: "FastAPI Backend", description: "Validated deltas are applied to the live scoring indices" },
-  { icon: "📍", label: "Live Scores", description: "Your analysis always reflects the most current neighbourhood data" },
+  { label: "Data Signals", description: "Real-world signals are continuously gathered for each neighbourhood" },
+  { label: "AI Analysis", description: "Signals are interpreted and translated into meaningful scoring changes" },
+  { label: "Score Update", description: "The backend quietly adjusts indices to reflect current conditions" },
+  { label: "Your Results", description: "Every analysis you run is grounded in up-to-date neighbourhood data" },
 ];
 
 export default async function LandingPage() {
@@ -157,11 +157,11 @@ export default async function LandingPage() {
       <section className="bg-[#f4f3ee] py-24 border-t border-gray-100">
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="text-center mb-14">
-            <span className="text-xs font-bold text-green-600 uppercase tracking-widest">Powered by n8n</span>
+            <span className="text-xs font-bold text-green-600 uppercase tracking-widest">Always current</span>
             <h2 className="mt-3 text-4xl font-extrabold tracking-tight">Scores that update themselves</h2>
             <p className="mt-3 text-gray-500 max-w-lg mx-auto text-base">
-              An automated pipeline runs every 12 hours — fetching the latest news, analysing it with AI, and
-              pushing delta updates to the scoring engine so your results are always grounded in reality.
+              Behind the scenes, an automated system keeps neighbourhood scores in sync with what&apos;s
+              actually happening on the ground — so you never have to worry about stale data.
             </p>
           </div>
 
@@ -170,7 +170,6 @@ export default async function LandingPage() {
             {pipelineSteps.map((step, i) => (
               <div key={step.label} className="flex flex-col md:flex-row items-center">
                 <div className="flex flex-col items-center text-center bg-white rounded-2xl border border-gray-200 shadow-sm p-6 w-52 hover:shadow-md transition-shadow">
-                  <span className="text-3xl mb-3">{step.icon}</span>
                   <p className="font-bold text-sm tracking-tight">{step.label}</p>
                   <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{step.description}</p>
                 </div>
@@ -184,12 +183,12 @@ export default async function LandingPage() {
           {/* Badge row */}
           <div className="mt-12 flex flex-wrap justify-center gap-3">
             {[
-              { label: "Schedule Trigger", color: "bg-purple-50 border-purple-200 text-purple-700" },
-              { label: "NewsAPI", color: "bg-blue-50 border-blue-200 text-blue-700" },
-              { label: "Groq LLaMA 3.1-8b", color: "bg-orange-50 border-orange-200 text-orange-700" },
-              { label: "9 scoring deltas", color: "bg-green-50 border-green-200 text-green-700" },
+              { label: "Automated", color: "bg-purple-50 border-purple-200 text-purple-700" },
+              { label: "Real-world signals", color: "bg-blue-50 border-blue-200 text-blue-700" },
+              { label: "AI-interpreted", color: "bg-orange-50 border-orange-200 text-orange-700" },
+              { label: "Live indices", color: "bg-green-50 border-green-200 text-green-700" },
               { label: "15 neighbourhoods", color: "bg-teal-50 border-teal-200 text-teal-700" },
-              { label: "Every 12 hours", color: "bg-gray-50 border-gray-200 text-gray-600" },
+              { label: "Runs periodically", color: "bg-gray-50 border-gray-200 text-gray-600" },
             ].map((b) => (
               <span key={b.label} className={`px-3 py-1.5 rounded-full border text-xs font-semibold ${b.color}`}>{b.label}</span>
             ))}

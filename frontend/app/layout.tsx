@@ -17,6 +17,7 @@ import {
 } from "@clerk/nextjs";
 import GitHubStarButton from "@/components/GitHubStarButton";
 import NavUserButton from "@/components/NavUserButton";
+import NavLinks from "@/components/NavLinks";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -68,29 +69,7 @@ export default function RootLayout({
             </Link>
 
             {/* Nav links */}
-            <div className="hidden md:flex items-center gap-5 text-sm font-medium text-gray-500">
-              <Link href="/" className="hover:text-black transition-colors">
-                Home
-              </Link>
-              <Link href="/app" className="hover:text-black transition-colors">
-                Analyze
-              </Link>
-              <Link href="/compare" className="hover:text-black transition-colors">
-                Compare
-              </Link>
-              <Link href="/methodology" className="hover:text-black transition-colors">
-                Methodology
-              </Link>
-              <Link href="/status" className="hover:text-black transition-colors">
-                Status
-              </Link>
-              <Link href="/pricing" className="hover:text-black transition-colors">
-                Pricing
-              </Link>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold">
-                Kolkata Beta
-              </span>
-            </div>
+            <NavLinks />
 
             {/* CTA */}
             <div className="flex items-center gap-2">
