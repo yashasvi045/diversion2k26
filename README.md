@@ -1,45 +1,129 @@
-# SiteScapr
+# 🗺️ SiteScapr — AI-Powered Business Location Recommender for Kolkata
 
-> AI-powered business location recommender for smarter site selection decisions in Kolkata.
-
----
-
-## Overview
-
-SiteScapr scores and ranks neighborhoods based on business-specific weighted metrics — income index, foot traffic, population density, competition, and commercial rent — returning actionable, ranked recommendations with AI-generated reasoning bullets.
+> SiteScapr helps business owners find the **best locations** in Kolkata to set up their business using AI-driven analysis, weighted scoring, and interactive map visualization.
 
 ---
 
-## Architecture
+## 🚀 Features
+
+- 📍 **Smart Location Recommendations** — ranked results based on business type, foot traffic, competition, and more
+- 🤖 **AI Reasoning Engine** — natural language justifications for each recommended location
+- 🗺️ **Interactive Map** — built with React Leaflet, visualizing top-ranked spots with markers and charts
+- ⚡ **Fast API Backend** — lightweight Python-based API with a scoring engine using weighted formulas
+- 📦 **Mock Dataset (JSON)** — ready-to-use data for Kolkata localities (PostgreSQL-ready for production)
+
+---
+
+## 🏗️ System Architecture
 
 ```
-Frontend (Next.js 14 + TypeScript + Tailwind + React Leaflet)
-       ↕ REST API (POST /analyze)
-Backend (FastAPI + Python 3.11 + Rule-based Scoring Engine)
+👤 Business Owner
+        │
+        ▼
+┌─────────────────────────────────────┐
+│           Frontend                  │
+│  Next.js 14 · TypeScript · Tailwind │
+│  React Leaflet Map                  │
+└────────────────┬────────────────────┘
+                 │  POST /analyze
+                 ▼
+┌─────────────────────────────────────┐
+│            Backend                  │
+│       FastAPI · Python 3.11         │
+└──────────┬──────────────┬───────────┘
+           │              │
+           ▼              ▼
+   📊 Scoring Engine   🤖 AI Reasoning
+   (Weighted Formula)  (Claude API)
+           │
+           ▼
+   📦 Mock Dataset (JSON)
+   → Future: PostgreSQL
+           │
+           ▼
+   🥇 Ranked Results + Map
+```
+
+## ⚙️ Getting Started
+
+**Prerequisites:** Node.js 18+ · Python 3.11+
+
+```bash
+# Clone
+git clone https://github.com/yashasvi045/diversion2k26
+
+
+# Backend
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload        # → http://localhost:8000
+
+# Frontend (new terminal)
+cd frontend
+npm install
+npm run dev                      # → http://localhost:3000
+```
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 14, TypeScript, Tailwind CSS |
+| Map | React Leaflet |
+| Backend | FastAPI, Python 3.11 |
+| AI Engine | Claude API (AI Reasoning) |
+| Scoring | Custom Weighted Formula Engine |
+| Data | JSON Mock Dataset (PostgreSQL planned) |
+
+---
+
+## 📁 Project Structure
+
+```
+sitescapr/
+├── frontend/
+│   ├── app/                  # Next.js App Router pages
+│   ├── components/
+│   │   └── MapView.tsx       # React Leaflet map component
+│   └── tailwind.config.ts
+├── backend/
+│   ├── main.py               # FastAPI entry point
+│   ├── scoring_engine.py     # Weighted formula logic
+│   ├── ai_engine.py          # AI reasoning integration
+│   └── data/
+│       └── locations.json    # Mock dataset for Kolkata
+└── README.md
 ```
 
 ---
 
-## Quick Start
+## ⚙️ Getting Started
 
-### 1. Backend
+### Prerequisites
+
+- Node.js 18+
+- Python 3.11+
+- pip
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/sitescapr.git
+cd sitescapr
+```
+
+### 2. Start the Backend
 
 ```bash
 cd backend
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# macOS/Linux
-source venv/bin/activate
-
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uvicorn main:app --reload
 ```
 
-Backend runs at: http://localhost:8000  
-Swagger docs at: http://localhost:8000/docs
+Backend runs at `http://localhost:8000`
 
-### 2. Frontend
+### 3. Start the Frontend
 
 ```bash
 cd frontend
@@ -47,29 +131,98 @@ npm install
 npm run dev
 ```
 
-Frontend runs at: http://localhost:3000
+Frontend runs at `http://localhost:3000`
 
 ---
 
-## Scoring Formula
+## 🔌 API Reference
 
-```
-Final Score = (0.30 × income_index)
-            + (0.25 × foot_traffic_proxy)
-            + (0.20 × population_density_index)
-            − (0.15 × competition_index)
-            − (0.10 × commercial_rent_index)
+### `POST /analyze`
+
+Analyzes and returns ranked location recommendations.
+
+**Request Body:**
+```json
+{
+  "business_type": "cafe",
+  "budget": "medium",
+  "target_audience": "students"
+}
 ```
 
-All indices are on a 0–100 scale.
+**Response:**
+```json
+{
+  "results": [
+    {
+      "rank": 1,
+      "location": "Salt Lake Sector V",
+      "score": 87.4,
+      "reason": "High footfall from IT professionals and students...",
+      "coordinates": [22.5726, 88.4272]
+    }
+  ]
+}
+```
 
 ---
 
-## Tech Stack
+## 🗃️ Dataset
 
-| Layer     | Technology               |
-|-----------|--------------------------|
-| Frontend  | Next.js 14, TypeScript, Tailwind CSS, React Leaflet |
-| Backend   | FastAPI, Python 3.11, Uvicorn |
-| Maps      | OpenStreetMap (Leaflet)  |
-| Data      | Mock dataset (Kolkata neighborhoods) |
+The current mock dataset (`locations.json`) covers major Kolkata localities and includes:
+
+- Foot traffic estimates
+- Competitor density
+- Rent index
+- Demographics
+- Connectivity scores
+
+> 📌 PostgreSQL integration is planned for the production version.
+
+---
+
+## 🛣️ Roadmap
+
+- [x] MVP with mock JSON dataset
+- [x] FastAPI backend with scoring engine
+- [x] React Leaflet map visualization
+- [ ] PostgreSQL database integration
+- [ ] User authentication & saved searches
+- [ ] Real-time data feeds (foot traffic, rent)
+- [ ] Mobile app (React Native)
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue first to discuss what you'd like to change.
+
+```bash
+git checkout -b feature/your-feature-name
+git commit -m "Add your feature"
+git push origin feature/your-feature-name
+```
+
+Then open a Pull Request.
+
+---
+## 🔮 Future Scope
+
+- Real-time municipal API integration
+- Machine learning model for demand prediction
+- Multi-city expansion
+- User accounts + saved reports
+- SaaS subscription model
+
+## 🏅 Why SiteScapr?
+
+✔ Data-driven  
+✔ Customizable scoring  
+✔ AI-powered reasoning  
+✔ Interactive map visualization  
+✔ Built for emerging markets
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+  
