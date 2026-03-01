@@ -19,7 +19,7 @@ Scoring Formula (v2):
     Others:                                             0.15  (Low-Medium)
 """
 
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from .schemas import AreaMetrics, ScoredArea
 
 # -- Clustering benefit factor by business type --------------------------------
@@ -458,12 +458,15 @@ def rank_areas(
     business_type: str,
     target_demographic: List[str],
     budget_range: int,
+    areas: Optional[List[Dict[str, Any]]] = None,
 ) -> List[ScoredArea]:
-    cbf     = _clustering_benefit(business_type)
-    profile = _get_profile(business_type)
+    """Score and rank areas. Uses `areas` if provided, otherwise falls back to KOLKATA_AREAS."""
+    cbf          = _clustering_benefit(business_type)
+    profile      = _get_profile(business_type)
     scored: List[Dict[str, Any]] = []
+    active_areas = areas if areas is not None else KOLKATA_AREAS
 
-    for area in KOLKATA_AREAS:
+    for area in active_areas:
         # Rent index 100 ≈ ₹3,00,000/month (realistic Kolkata upper bound).
         # 1.5× tolerance gives the user a comfortable margin for negotiation.
         estimated_rent = (area["commercial_rent_index"] / 100) * 300_000

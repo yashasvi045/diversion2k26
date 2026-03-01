@@ -14,12 +14,13 @@ import os
 import uuid
 import razorpay
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from .schemas import AnalyzeRequest, AnalyzeResponse
+from .schemas import AnalyzeRequest, AnalyzeResponse, IndexDeltaUpdate
 from .scoring_engine import rank_areas, KOLKATA_AREAS
+from .database import init_db, get_areas, apply_delta, get_last_pipeline_run
 
 load_dotenv()
 
@@ -43,6 +44,19 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+def startup_event() -> None:
+    """
+    Initialise the SQLite database and seed it with static area data
+    if the table is empty. Runs automatically on every server start.
+    """
+    init_db()
+    db_areas = get_areas()
+    if not db_areas:
+        from .seed import seed
+        seed()
+
+
 @app.get("/")
 def health_check():
     """Basic health check endpoint."""
@@ -58,11 +72,16 @@ def analyze(request: AnalyzeRequest):
     against the weighted formula, applies budget filter, and returns
     the top 5 ranked recommendations with reasoning.
     """
+    # Use live DB indices; fall back to static dataset if DB is empty.
+    db_areas = get_areas()
+    active_areas = db_areas if db_areas else KOLKATA_AREAS
+
     try:
         results = rank_areas(
             business_type=request.business_type,
             target_demographic=request.target_demographic,
             budget_range=request.budget_range,
+            areas=active_areas,
         )
     except Exception:
         raise HTTPException(status_code=500, detail="Analysis failed. Please try again.")
@@ -76,8 +95,53 @@ def analyze(request: AnalyzeRequest):
     return AnalyzeResponse(
         results=results,
         business_type=request.business_type,
-        total_areas_analyzed=len(KOLKATA_AREAS),
+        total_areas_analyzed=len(active_areas),
     )
+
+
+# ── Pipeline: n8n update endpoint ────────────────────────────────────────────
+
+@app.post("/internal/update-indices")
+def update_indices(
+    payload: IndexDeltaUpdate,
+    x_pipeline_secret: str = Header(None, alias="X-Pipeline-Secret"),
+) -> dict:
+    """
+    Called by the n8n pipeline every 12 hours to apply news-derived
+    index deltas to a neighbourhood. Protected by a shared secret header.
+    """
+    expected = os.getenv("PIPELINE_SECRET", "")
+    if x_pipeline_secret != expected:
+        raise HTTPException(status_code=403, detail="Forbidden: invalid pipeline secret.")
+
+    deltas = {
+        "income_index_delta":                    payload.income_index_delta,
+        "foot_traffic_proxy_delta":              payload.foot_traffic_proxy_delta,
+        "population_density_index_delta":        payload.population_density_index_delta,
+        "competition_index_delta":               payload.competition_index_delta,
+        "commercial_rent_index_delta":           payload.commercial_rent_index_delta,
+        "accessibility_penalty_delta":           payload.accessibility_penalty_delta,
+        "area_growth_trend_delta":               payload.area_growth_trend_delta,
+        "vacancy_rate_improvement_delta":        payload.vacancy_rate_improvement_delta,
+        "infrastructure_investment_index_delta": payload.infrastructure_investment_index_delta,
+    }
+
+    success = apply_delta(payload.area_name, deltas, payload.source_summary)
+    if not success:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Area '{payload.area_name}' not found in database.",
+        )
+    return {"status": "updated", "area": payload.area_name}
+
+
+@app.get("/pipeline/last-run")
+def pipeline_last_run() -> dict:
+    """Returns metadata about the most recently updated neighbourhood."""
+    info = get_last_pipeline_run()
+    if not info:
+        return {"last_updated": None, "area": None, "summary": "No pipeline runs recorded yet."}
+    return info
 
 
 # ── Razorpay ──────────────────────────────────────────────────────────────────

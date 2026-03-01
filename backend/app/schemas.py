@@ -65,3 +65,22 @@ class AnalyzeResponse(BaseModel):
     results: List[ScoredArea]
     business_type: str
     total_areas_analyzed: int
+
+
+class IndexDeltaUpdate(BaseModel):
+    """
+    Payload sent by the n8n pipeline to update a neighbourhood's indices.
+    All delta fields default to 0.0 — only non-zero fields are applied.
+    Values are clamped to keep each index within [0, 100].
+    """
+    area_name: str
+    income_index_delta: float = 0.0
+    foot_traffic_proxy_delta: float = 0.0
+    population_density_index_delta: float = 0.0
+    competition_index_delta: float = 0.0
+    commercial_rent_index_delta: float = 0.0
+    accessibility_penalty_delta: float = 0.0
+    area_growth_trend_delta: float = 0.0
+    vacancy_rate_improvement_delta: float = 0.0
+    infrastructure_investment_index_delta: float = 0.0
+    source_summary: str = ""  # short description of the news used

@@ -42,3 +42,12 @@ Thumbs.db
 .parcel-cache/
 coverage/
 .nyc_output/
+
+# ── Pipeline ──────────────────────────────────────────────────────────────────
+# Contains hardcoded API keys — never commit this file
+n8n_workflow.json
+
+# SQLite database — contains live index data
+*.db
+*.db-shm
+*.db-wal

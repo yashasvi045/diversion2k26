@@ -1,0 +1,31 @@
+version: "3.8"
+
+# Runs n8n (the automation pipeline UI) locally.
+# FastAPI continues to run natively via uvicorn — no change to your existing workflow.
+#
+# Start with:  docker compose up -d
+# Open n8n at: http://localhost:5678  (login: admin / admin123)
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - GENERIC_TIMEZONE=Asia/Kolkata
+      - TZ=Asia/Kolkata
+      # Allows n8n to call back to your host machine (where FastAPI runs on :8000)
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
+    volumes:
+      - n8n_data:/home/node/.n8n
+    extra_hosts:
+      # On Docker Desktop (Windows/Mac) host.docker.internal resolves automatically.
+      # This line is only needed on Linux hosts.
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  n8n_data:
