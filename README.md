@@ -225,4 +225,4 @@ Then open a Pull Request.
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
-  
+
