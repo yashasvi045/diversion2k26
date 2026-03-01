@@ -10,7 +10,8 @@
 - 🤖 **AI Reasoning Engine** — natural language justifications for each recommended location
 - 🗺️ **Interactive Map** — built with React Leaflet, visualizing top-ranked spots with markers and charts
 - ⚡ **Fast API Backend** — lightweight Python-based API with a scoring engine using weighted formulas
-- 📦 **Mock Dataset (JSON)** — ready-to-use data for Kolkata localities (PostgreSQL-ready for production)
+- 📦 **SQLite Database** — persistent storage for neighbourhood indices, auto-seeded on startup
+- 🔄 **n8n Automation Pipeline** — runs every 12 hours, fetches NewsAPI headlines for all 15 Kolkata areas, uses Groq LLaMA 3.1 to produce scoring deltas, and auto-updates the live indices
 
 ---
 
@@ -30,18 +31,20 @@
 ┌─────────────────────────────────────┐
 │            Backend                  │
 │       FastAPI · Python 3.11         │
-└──────────┬──────────────┬───────────┘
-           │              │
-           ▼              ▼
-   📊 Scoring Engine   🤖 AI Reasoning
-   (Weighted Formula)  (Claude API)
+└──────────┬──────────────────────────┘
            │
            ▼
-   📦 Mock Dataset (JSON)
-   → Future: PostgreSQL
-           │
-           ▼
-   🥇 Ranked Results + Map
+   📊 Scoring Engine   🗄️ SQLite DB
+   (Weighted Formula)  (live indices)
+           │                 ▲
+           ▼                 │ POST /internal/update-indices
+   🥇 Ranked Results + Map   │
+                     ┌───────┴──────────────────────────┐
+                     │      n8n Automation Pipeline      │
+                     │  ⏰ Every 12 h                    │
+                     │  🗞️  NewsAPI (15 neighbourhoods)  │
+                     │  🤖 Groq LLaMA 3.1 (deltas)      │
+                     └──────────────────────────────────┘
 ```
 
 ## ⚙️ Getting Started
@@ -72,9 +75,11 @@ npm run dev                      # → http://localhost:3000
 | Frontend | Next.js 14, TypeScript, Tailwind CSS |
 | Map | React Leaflet |
 | Backend | FastAPI, Python 3.11 |
-| AI Engine | Claude API (AI Reasoning) |
+| Database | SQLite (via SQLAlchemy) |
+| AI Engine | Groq LLaMA 3.1-8b (scoring deltas) |
 | Scoring | Custom Weighted Formula Engine |
-| Data | JSON Mock Dataset (PostgreSQL planned) |
+| Automation | n8n workflow (News Index Pipeline) |
+| News Data | NewsAPI.org |
 
 ---
 
@@ -169,15 +174,46 @@ Analyzes and returns ranked location recommendations.
 
 ## 🗃️ Dataset
 
-The current mock dataset (`locations.json`) covers major Kolkata localities and includes:
+The scoring indices are stored in SQLite and seeded from `backend/app/seed.py` on first run. They cover all 15 major Kolkata localities and track:
 
-- Foot traffic estimates
-- Competitor density
-- Rent index
-- Demographics
-- Connectivity scores
+- Foot traffic proxy
+- Competition index
+- Commercial rent index
+- Income index
+- Population density index
+- Area growth trend
+- Infrastructure investment index
+- Vacancy rate
+- Accessibility penalty
 
-> 📌 PostgreSQL integration is planned for the production version.
+---
+
+## 🔄 n8n Automation Pipeline
+
+The file `n8n_workflow.json` is an importable n8n workflow called **SiteScapr News Index Pipeline**.
+
+### What it does
+
+| Step | Node | Action |
+|------|------|---------|
+| 1 | Schedule Trigger | Fires every 12 hours |
+| 2 | Generate Area List | Emits one item per neighbourhood (15 total) |
+| 3 | Fetch NewsAPI | Queries the last 7 days of news for each area |
+| 4 | Format News | Builds a concise text digest (up to 10 headlines) |
+| 5 | Build Groq Request | Constructs the LLM prompt asking for scoring deltas |
+| 6 | Call Groq | Sends to `llama-3.1-8b-instant` via Groq API |
+| 7 | Parse Deltas | Validates and clamps 9 delta values to `[-10, +10]` |
+| 8 | Update FastAPI | POSTs deltas to `/internal/update-indices` on the backend |
+
+### How to import
+
+1. Start n8n (`npx n8n` or via Docker: `docker-compose up n8n`)
+2. In the n8n UI, go to **Workflows → Import from file**
+3. Select `n8n_workflow.json`
+4. Set the `PIPELINE_SECRET` credential to `sitescapr_pipeline_2026`
+5. Activate the workflow
+
+> The workflow targets `http://host.docker.internal:8000` — change to `http://localhost:8000` if running n8n outside Docker.
 
 ---
 
@@ -185,10 +221,11 @@ The current mock dataset (`locations.json`) covers major Kolkata localities and 
 
 - [x] MVP with mock JSON dataset
 - [x] FastAPI backend with scoring engine
+- [x] SQLite database with live scoring indices
 - [x] React Leaflet map visualization
-- [ ] PostgreSQL database integration
+- [x] n8n automation pipeline (news-driven index updates via Groq AI)
+- [ ] PostgreSQL migration for production
 - [ ] User authentication & saved searches
-- [ ] Real-time data feeds (foot traffic, rent)
 - [ ] Mobile app (React Native)
 
 ---
@@ -225,4 +262,6 @@ Then open a Pull Request.
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![n8n](https://img.shields.io/badge/n8n-Automation-orange)
+![Groq](https://img.shields.io/badge/Groq-LLaMA_3.1-purple)
 
